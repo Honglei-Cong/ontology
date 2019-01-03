@@ -58,6 +58,7 @@ import (
 	"github.com/ontio/ontology/validator/stateful"
 	"github.com/ontio/ontology/validator/stateless"
 	"github.com/urfave/cli"
+	chainmgr2 "github.com/ontio/ontology/core/chainmgr"
 )
 
 func setupAPP() *cli.App {
@@ -124,6 +125,12 @@ func setupAPP() *cli.App {
 		//ws setting
 		utils.WsEnabledFlag,
 		utils.WsPortFlag,
+		//sharding setting
+		utils.ShardIDFlag,
+		utils.ShardPortFlag,
+		utils.ParentShardIDFlag,
+		utils.ParentShardIPFlag,
+		utils.ParentShardPortFlag,
 	}
 	app.Before = func(context *cli.Context) error {
 		runtime.GOMAXPROCS(runtime.NumCPU())
@@ -144,8 +151,16 @@ func startOntology(ctx *cli.Context) {
 
 	log.Infof("ontology version %s", config.Version)
 
-	_, err := initConfig(ctx)
-	if err != nil {
+	shardID := ctx.Uint64(utils.GetFlagName(utils.ShardIDFlag))
+	if shardID == config.DEFAULT_SHARD_ID {
+		startMainChain(ctx)
+	} else {
+		startShardChain(ctx, shardID)
+	}
+}
+
+func startMainChain(ctx *cli.Context) {
+	if _, err := initConfig(ctx); err != nil {
 		log.Errorf("initConfig error:%s", err)
 		return
 	}
@@ -154,6 +169,14 @@ func startOntology(ctx *cli.Context) {
 		log.Errorf("initWallet error:%s", err)
 		return
 	}
+	// start chain manager
+	chainmgr, err := initChainManager(ctx, acc)
+	if err != nil {
+		log.Errorf("init main chain manager error: %s", err)
+		return
+	}
+	defer chainmgr.Stop()
+
 	ldg, err := initLedger(ctx)
 	if err != nil {
 		log.Errorf("%s", err)
@@ -170,6 +193,12 @@ func startOntology(ctx *cli.Context) {
 		log.Errorf("initP2PNode error:%s", err)
 		return
 	}
+
+	if err := chainmgr.SetP2P(p2pPid); err != nil {
+		log.Errorf("init chain manager error: %s", err)
+		return
+	}
+
 	_, err = initConsensus(ctx, p2pPid, txpool, acc)
 	if err != nil {
 		log.Errorf("initConsensus error:%s", err)
@@ -190,6 +219,27 @@ func startOntology(ctx *cli.Context) {
 	initNodeInfo(ctx, p2pSvr)
 
 	go logCurrBlockHeight()
+	waitToExit()
+}
+
+func startShardChain(ctx *cli.Context, shardID uint64) {
+	parentShardIP := ctx.String(utils.GetFlagName(utils.ParentShardIPFlag))
+	if len(parentShardIP) == 0 {
+		parentShardIP = config.DEFAULT_PARENTSHARD_IPADDR
+	}
+
+	parentShardPort := ctx.Uint(utils.GetFlagName(utils.ParentShardPortFlag))
+	if parentShardPort == 0 {
+		log.Errorf("no parent shard port")
+		return
+	}
+
+	// start chain manager with parent shard
+	// wait chain manager initialized
+
+	// start shard
+
+	// init config with parameters from parent shard
 	waitToExit()
 }
 
@@ -235,6 +285,17 @@ func initAccount(ctx *cli.Context) (*account.Account, error) {
 
 	log.Infof("Account init success")
 	return acc, nil
+}
+
+func initChainManager(ctx *cli.Context, acc *account.Account) (*chainmgr2.ChainManager, error) {
+	shardID := ctx.Uint64(utils.GetFlagName(utils.ShardIDFlag))
+	shardPort := ctx.Uint(utils.GetFlagName(utils.ShardPortFlag))
+	parentShardID := ctx.Uint64(utils.GetFlagName(utils.ParentShardIDFlag))
+	parentShardAddr := ctx.String(utils.GetFlagName(utils.ParentShardIPFlag))
+	parentShardPort := ctx.Uint(utils.GetFlagName(utils.ParentShardPortFlag))
+	log.Infof("staring chain %d mgr: port %d, parent (%d, %s, %d)",
+		shardID, shardPort, parentShardID, parentShardAddr, parentShardPort)
+	return chainmgr2.Initialize(shardID, parentShardID, parentShardAddr, shardPort, parentShardPort, acc)
 }
 
 func initLedger(ctx *cli.Context) (*ledger.Ledger, error) {
