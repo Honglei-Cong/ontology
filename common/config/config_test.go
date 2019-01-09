@@ -20,11 +20,34 @@ package config
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"bytes"
 )
 
 func TestConfigGeneration(t *testing.T) {
-	polarisConfig := newPolarisConfig()
-	assert.Equal(t, polarisConfig, Parameters)
-	defaultConfig := newDefaultConfig()
-	assert.NotEqual(t, defaultConfig, polarisConfig)
+	defaultConfig := NewOntologyConfig()
+	assert.Equal(t, defaultConfig, DefConfig)
+}
+
+func TestConfigSerialize(t *testing.T) {
+	defaultConfig := NewOntologyConfig()
+	buf := new(bytes.Buffer)
+
+	if err := defaultConfig.Serialize(buf); err != nil {
+		t.Errorf("serialize config err: %s", err)
+	}
+
+	cfgBytes := buf.Bytes()
+	cfg2 := &OntologyConfig{}
+	if err := cfg2.Deserialize(buf); err != nil {
+		t.Errorf("deserialize config err: %s", err)
+	}
+
+	buf2 := new(bytes.Buffer)
+	if err := cfg2.Serialize(buf2); err != nil {
+		t.Errorf("serialize config2 err: %s", err)
+	}
+
+	if bytes.Compare(cfgBytes, buf2.Bytes()) != 0 {
+		t.Errorf("config ser/des err")
+	}
 }
