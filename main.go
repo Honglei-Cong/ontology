@@ -186,6 +186,9 @@ func startMainChain(ctx *cli.Context) {
 		return
 	}
 	defer ldg.Close()
+
+	chainmgr.SubscribeShardEvent()
+
 	txpool, err := initTxPool(ctx)
 	if err != nil {
 		log.Errorf("initTxPool error:%s", err)
