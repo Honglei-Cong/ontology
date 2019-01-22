@@ -126,6 +126,10 @@ func (pool *ShardBlockPool) AddBlock(blkInfo *ShardBlockInfo) error {
 	return nil
 }
 
+func (pool *ShardBlockPool) AddEvent(evt shardstates.ShardMgmtEvent) error {
+	return nil
+}
+
 ////////////////////////////////////
 //
 //  json helpers
