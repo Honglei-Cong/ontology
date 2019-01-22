@@ -148,11 +148,11 @@ func main() {
 }
 
 func startOntology(ctx *cli.Context) {
-	initLog(ctx)
+	shardID := ctx.Uint64(utils.GetFlagName(utils.ShardIDFlag))
+	initLog(ctx, shardID)
 
 	log.Infof("ontology version %s", config.Version)
 
-	shardID := ctx.Uint64(utils.GetFlagName(utils.ShardIDFlag))
 	if shardID == config.DEFAULT_SHARD_ID {
 		startMainChain(ctx)
 	} else {

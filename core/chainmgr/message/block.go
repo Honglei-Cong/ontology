@@ -9,6 +9,7 @@ import (
 	"github.com/ontio/ontology/common/serialization"
 	"github.com/ontio/ontology/core/types"
 	"github.com/ontio/ontology/smartcontract/service/native/shardmgmt/states"
+	"github.com/ontio/ontology/common"
 )
 
 const (
@@ -34,13 +35,13 @@ type shardBlkHdrHelper struct {
 }
 
 func (this *ShardBlockHeader) MarshalJSON() ([]byte, error) {
-	buf := new(bytes.Buffer)
-	if err := this.Header.Serialize(buf); err != nil {
+	sink := common.NewZeroCopySink(nil)
+	if err := this.Header.Serialization(sink); err != nil {
 		return nil, fmt.Errorf("shard block hdr marshal: %s", err)
 	}
 
 	return json.Marshal(&shardBlkHdrHelper{
-		Payload: buf.Bytes(),
+		Payload: sink.Bytes(),
 	})
 }
 
@@ -50,9 +51,9 @@ func (this *ShardBlockHeader) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("shard block hdr helper: %s", err)
 	}
 
-	buf := bytes.NewBuffer(helper.Payload)
+	source := common.NewZeroCopySource(helper.Payload)
 	hdr := &types.Header{}
-	if err := hdr.Deserialize(buf); err != nil {
+	if err := hdr.Deserialization(source); err != nil {
 		return fmt.Errorf("shard block hdr unmarshal: %s", err)
 	}
 	this.Header = hdr

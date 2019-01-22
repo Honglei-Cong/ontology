@@ -17,6 +17,10 @@ func GetAccount() *account.Account {
 	return chainmgr.account
 }
 
+func GetShardID() uint64 {
+	return GetChainManager().shardID
+}
+
 func GetParentShardID() uint64 {
 	chainmgr := GetChainManager()
 	return chainmgr.parentShardID
@@ -58,18 +62,23 @@ func GetParentBlockHeader(height uint64) *types.Header {
 	return nil
 }
 
-func GetParentBlockEvents(height uint64) []shardstates.ShardMgmtEvent {
+func GetBlockEventsByParentHeight(height uint64) map[uint64][]shardstates.ShardMgmtEvent {
 	chainmgr := GetChainManager()
+
 	chainmgr.lock.RLock()
 	defer chainmgr.lock.RUnlock()
 
+	shardEvts := make(map[uint64][]shardstates.ShardMgmtEvent)
+
 	m := chainmgr.blockPool.Shards[chainmgr.parentShardID]
 	if m == nil {
-		return nil
+		return shardEvts
 	}
 	if blk, present := m[height]; present && blk != nil {
-		return blk.Events
+		shardEvts[chainmgr.parentShardID] = blk.Events
 	}
 
-	return nil
+	// TODO: add shard event from sibling shards
+
+	return shardEvts
 }
