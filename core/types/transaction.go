@@ -382,7 +382,7 @@ const (
 )
 
 // Payload define the func for loading the payload data
-// base on payload type which have different struture
+// base on payload type which have different structure
 type Payload interface {
 	//Serialize payload data
 	Serialize(w io.Writer) error
