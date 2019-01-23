@@ -200,7 +200,7 @@ func (self *SoloService) makeBlock() (*types.Block, error) {
 
 	blockRoot := ledger.DefLedger.GetBlockRootWithNewTxRoots(height+1, []common.Uint256{txRoot})
 	parentHeight := chainmgr.GetParentBlockHeight()
-	evts := chainmgr.GetBlockEventsByParentHeight(parentHeight)
+	shardTxs := chainmgr.GetShardTxsByParentHeight(parentHeight)
 	header := &types.Header{
 		Version:          ContextVersion,
 		ShardID:          chainmgr.GetShardID(),
@@ -216,7 +216,7 @@ func (self *SoloService) makeBlock() (*types.Block, error) {
 	}
 	block := &types.Block{
 		Header:       header,
-		Events: evts,
+		ShardTxs:     shardTxs,
 		Transactions: transactions,
 	}
 

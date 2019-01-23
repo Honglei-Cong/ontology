@@ -50,7 +50,7 @@ type SmartContract struct {
 
 // Config describe smart contract need parameters configuration
 type Config struct {
-	ShardID   uint64			// TODO: init this field
+	ShardID   uint64              // TODO: init this field
 	Time      uint32              // current block timestamp
 	Height    uint32              // current block height
 	BlockHash common.Uint256      // current block hash

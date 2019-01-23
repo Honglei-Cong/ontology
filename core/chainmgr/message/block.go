@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/ontio/ontology/common"
 	"github.com/ontio/ontology/common/serialization"
 	"github.com/ontio/ontology/core/types"
 	"github.com/ontio/ontology/smartcontract/service/native/shardmgmt/states"
-	"github.com/ontio/ontology/common"
 )
 
 const (
@@ -97,7 +97,7 @@ func (this *ShardBlockInfo) Deserialize(r io.Reader) error {
 	return DesJson(r, this)
 }
 
-func (this *ShardBlockInfo)ConstructShardBlockTx() error {
+func (this *ShardBlockInfo) ConstructShardBlockTx() error {
 	return nil
 }
 
