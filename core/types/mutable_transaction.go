@@ -24,6 +24,7 @@ import (
 	"io"
 
 	"github.com/ontio/ontology/common"
+	"github.com/ontio/ontology/common/config"
 	"github.com/ontio/ontology/common/serialization"
 	"github.com/ontio/ontology/core/payload"
 )
@@ -32,6 +33,7 @@ type MutableTransaction struct {
 	Version  byte
 	TxType   TransactionType
 	Nonce    uint32
+	ShardID  uint64
 	GasPrice uint64
 	GasLimit uint64
 	Payer    common.Address
@@ -101,6 +103,9 @@ func (tx *MutableTransaction) serializeUnsigned(sink *common.ZeroCopySink) error
 	sink.WriteByte(byte(tx.Version))
 	sink.WriteByte(byte(tx.TxType))
 	sink.WriteUint32(tx.Nonce)
+	if tx.Version >= VERSION_SUPPORT_SHARD {
+		sink.WriteUint64(tx.ShardID)
+	}
 	sink.WriteUint64(tx.GasPrice)
 	sink.WriteUint64(tx.GasLimit)
 	sink.WriteBytes(tx.Payer[:])
@@ -134,9 +139,17 @@ func (tx *MutableTransaction) DeserializeUnsigned(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+	version := versiontype[0]
 	nonce, err := serialization.ReadUint32(r)
 	if err != nil {
 		return err
+	}
+	shardID := uint64(config.DEFAULT_SHARD_ID)
+	if version >= VERSION_SUPPORT_SHARD {
+		shardID, err = serialization.ReadUint64(r)
+		if err != nil {
+			return err
+		}
 	}
 	gasPrice, err := serialization.ReadUint64(r)
 	if err != nil {
@@ -146,8 +159,9 @@ func (tx *MutableTransaction) DeserializeUnsigned(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	tx.Version = versiontype[0]
+	tx.Version = version
 	tx.TxType = TransactionType(versiontype[1])
+	tx.ShardID = shardID
 	tx.Nonce = nonce
 	tx.GasPrice = gasPrice
 	tx.GasLimit = gasLimit

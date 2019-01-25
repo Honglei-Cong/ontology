@@ -27,6 +27,7 @@ import (
 
 	"github.com/ontio/ontology-crypto/keypair"
 	"github.com/ontio/ontology/common"
+	"github.com/ontio/ontology/common/config"
 	"github.com/ontio/ontology/common/constants"
 	"github.com/ontio/ontology/common/serialization"
 	"github.com/ontio/ontology/core/payload"
@@ -35,10 +36,13 @@ import (
 
 const MAX_TX_SIZE = 1024 * 1024 // The max size of a transaction to prevent DOS attacks
 
+const VERSION_SUPPORT_SHARD = 1
+
 type Transaction struct {
 	Version  byte
 	TxType   TransactionType
 	Nonce    uint32
+	ShardID  uint64
 	GasPrice uint64
 	GasLimit uint64
 	Payer    common.Address
@@ -124,6 +128,7 @@ func (tx *Transaction) IntoMutable() (*MutableTransaction, error) {
 		Version:  tx.Version,
 		TxType:   tx.TxType,
 		Nonce:    tx.Nonce,
+		ShardID:  tx.ShardID,
 		GasPrice: tx.GasPrice,
 		GasLimit: tx.GasLimit,
 		Payer:    tx.Payer,
@@ -148,6 +153,11 @@ func (tx *Transaction) deserializationUnsigned(source *common.ZeroCopySource) er
 	txtype, eof = source.NextByte()
 	tx.TxType = TransactionType(txtype)
 	tx.Nonce, eof = source.NextUint32()
+	if tx.Version >= VERSION_SUPPORT_SHARD {
+		tx.ShardID, eof = source.NextUint64()
+	} else {
+		tx.ShardID = config.DEFAULT_SHARD_ID
+	}
 	tx.GasPrice, eof = source.NextUint64()
 	tx.GasLimit, eof = source.NextUint64()
 	var buf []byte
