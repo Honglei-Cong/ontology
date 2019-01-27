@@ -104,7 +104,7 @@ func BuildGenesisBlock(defaultBookkeeper []keypair.PublicKey, genesisConfig *con
 	param := newParamContract()
 	oid := deployOntIDContract()
 	auth := deployAuthContract()
-	govConfigTx := newGovConfigTx()
+	govConfigTx := newGovContract()
 
 	genesisBlock := &types.Block{
 		Header: genesisHeader,
@@ -163,14 +163,14 @@ func buildShardGenesisBlock(defaultBookkeeper []keypair.PublicKey, genesisConfig
 	//block
 	ong := newUtilityToken()
 	param := newParamContract()
-	config := newConfig()
+	gov := newGovContract()
 
 	genesisBlock := &types.Block{
 		Header: genesisHeader,
 		Transactions: []*types.Transaction{
 			ong,
 			param,
-			config,
+			gov,
 			deployShardMgmtContract(),
 			deployShardSysMsgContract(),
 			newShardUtilityInit(),
@@ -215,7 +215,7 @@ func newParamContract() *types.Transaction {
 	return tx
 }
 
-func newGovConfigTx() *types.Transaction {
+func newGovContract() *types.Transaction {
 	mutable := utils.NewDeployTransaction(nutils.GovernanceContractAddress[:], "CONFIG", "1.0",
 		"Ontology Team", "contact@ont.io", "Ontology Network Consensus Config", true)
 	tx, err := mutable.IntoImmutable()
@@ -294,7 +294,7 @@ func newShardUtilityInit() *types.Transaction {
 	mutable := utils.BuildNativeTransaction(nutils.OngContractAddress, ont.SHARD_INIT_NAME, []byte{})
 	tx, err := mutable.IntoImmutable()
 	if err != nil {
-		panic("contract genesis shard utility token transaction error ")
+		panic("construct genesis shard utility token transaction error ")
 	}
 
 	return tx
@@ -355,7 +355,7 @@ func deployShardMgmtContract() *types.Transaction {
 		"Ontology Team", "contact@ont.io", "Ontology Shard Management", true)
 	tx, err := mutable.IntoImmutable()
 	if err != nil {
-		panic("contract genesis shardmgmt transaction error ")
+		panic("construct genesis shardmgmt transaction error ")
 	}
 	return tx
 }
@@ -365,7 +365,7 @@ func deployShardSysMsgContract() *types.Transaction {
 		"Ontology Team", "contact@ont.io", "Ontology Shard System Messaging", true)
 	tx, err := mutable.IntoImmutable()
 	if err != nil {
-		panic("contract genesis shardsysmsg transaction error ")
+		panic("construct genesis shardsysmsg transaction error ")
 	}
 	return tx
 }
@@ -374,7 +374,7 @@ func initShardMgmtContract() *types.Transaction {
 	mutable := utils.BuildNativeTransaction(nutils.ShardMgmtContractAddress, shardmgmt.INIT_NAME, []byte{})
 	tx, err := mutable.IntoImmutable()
 	if err != nil {
-		panic("contract genesis shard management transaction error ")
+		panic("construct genesis shard management transaction error ")
 	}
 
 	return tx
@@ -384,7 +384,7 @@ func initShardSysMsgContract() *types.Transaction {
 	mutable := utils.BuildNativeTransaction(nutils.ShardSysMsgContractAddress, shardsysmsg.INIT_NAME, []byte{})
 	tx, err := mutable.IntoImmutable()
 	if err != nil {
-		panic("contract genesis shard sysmsg transaction error ")
+		panic("construct genesis shard sysmsg transaction error ")
 	}
 
 	return tx
