@@ -24,10 +24,10 @@ import (
 
 	"github.com/ontio/ontology/common/log"
 	"github.com/ontio/ontology/smartcontract/service/native"
-	"github.com/ontio/ontology/smartcontract/service/native/shardmgmt"
-	"github.com/ontio/ontology/smartcontract/service/native/utils"
-	"github.com/ontio/ontology/smartcontract/service/native/shardping/states"
 	"github.com/ontio/ontology/smartcontract/service/native/shard_sysmsg"
+	"github.com/ontio/ontology/smartcontract/service/native/shardmgmt"
+	"github.com/ontio/ontology/smartcontract/service/native/shardping/states"
+	"github.com/ontio/ontology/smartcontract/service/native/utils"
 )
 
 /////////
@@ -41,7 +41,7 @@ import (
 
 const (
 	// function name
-	SHARD_PING_NAME = "shardPing"
+	SHARD_PING_NAME      = "shardPing"
 	SEND_SHARD_PING_NAME = "sendShardPing"
 )
 
@@ -103,16 +103,22 @@ func SendShardPingTest(native *native.NativeService) ([]byte, error) {
 }
 
 func appcallSendReq(native *native.NativeService, toShard uint64, payload []byte) error {
-	buf := new(bytes.Buffer)
+	paramBytes := new(bytes.Buffer)
 	params := shardsysmsg.NotifyReqParam{
 		ToShard: toShard,
-		Payload: payload,
+		Args:    payload,
 	}
-	if err := params.Serialize(buf); err != nil {
+	if err := params.Serialize(paramBytes); err != nil {
 		return fmt.Errorf("send ping shard, marshal param: %s", err)
 	}
 
-	if _, err := native.NativeCall(utils.ShardSysMsgContractAddress, shardsysmsg.REMOTE_NOTIFY, buf.Bytes()); err != nil {
+	cmnBytes := new(bytes.Buffer)
+	cmnParam := shardmgmt.CommonParam{paramBytes.Bytes()}
+	if err := cmnParam.Serialize(cmnBytes); err != nil {
+		return fmt.Errorf("send ping shard, marshal cmn param: %s", err)
+	}
+
+	if _, err := native.NativeCall(utils.ShardSysMsgContractAddress, shardsysmsg.REMOTE_NOTIFY, cmnBytes.Bytes()); err != nil {
 		return fmt.Errorf("send ping shard, appcallSendReq: %s", err)
 	}
 	return nil

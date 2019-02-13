@@ -58,6 +58,7 @@ func (self *StateStore) HandleDeployTransaction(store store.LedgerStore, overlay
 	if tx.GasPrice != 0 {
 		// init smart contract configuration info
 		config := &smartcontract.Config{
+			ShardID:   block.Header.ShardID,
 			Time:      block.Header.Timestamp,
 			Height:    block.Header.Height,
 			Tx:        tx,
@@ -127,6 +128,7 @@ func (self *StateStore) HandleInvokeTransaction(store store.LedgerStore, overlay
 
 	// init smart contract configuration info
 	config := &smartcontract.Config{
+		ShardID:   block.Header.ShardID,
 		Time:      block.Header.Timestamp,
 		Height:    block.Header.Height,
 		Tx:        tx,

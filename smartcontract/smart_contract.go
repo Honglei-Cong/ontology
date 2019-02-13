@@ -151,6 +151,7 @@ func (this *SmartContract) NewNativeService() (*native.NativeService, error) {
 		CacheDB:    this.CacheDB,
 		ContextRef: this,
 		Tx:         this.Config.Tx,
+		ShardID:    this.Config.ShardID,
 		Time:       this.Config.Time,
 		Height:     this.Config.Height,
 		BlockHash:  this.Config.BlockHash,

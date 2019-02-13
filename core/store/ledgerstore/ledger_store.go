@@ -620,6 +620,7 @@ func (this *LedgerStoreImp) executeBlock(block *types.Block) (result store.Execu
 	overlay := this.stateStore.NewOverlayDB()
 	if block.Header.Height != 0 {
 		config := &smartcontract.Config{
+			ShardID: block.Header.ShardID,
 			Time:   block.Header.Timestamp,
 			Height: block.Header.Height,
 			Tx:     &types.Transaction{},
@@ -1029,6 +1030,7 @@ func (this *LedgerStoreImp) PreExecuteContract(tx *types.Transaction) (*sstate.P
 	stf := &sstate.PreExecResult{State: event.CONTRACT_STATE_FAIL, Gas: neovm.MIN_TRANSACTION_GAS, Result: nil}
 
 	config := &smartcontract.Config{
+		ShardID:   tx.ShardID,
 		Time:      uint32(time.Now().Unix()),
 		Height:    height + 1,
 		Tx:        tx,
