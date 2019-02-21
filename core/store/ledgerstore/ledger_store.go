@@ -621,9 +621,9 @@ func (this *LedgerStoreImp) executeBlock(block *types.Block) (result store.Execu
 	if block.Header.Height != 0 {
 		config := &smartcontract.Config{
 			ShardID: block.Header.ShardID,
-			Time:   block.Header.Timestamp,
-			Height: block.Header.Height,
-			Tx:     &types.Transaction{},
+			Time:    block.Header.Timestamp,
+			Height:  block.Header.Height,
+			Tx:      &types.Transaction{},
 		}
 
 		err = refreshGlobalParam(config, storage.NewCacheDB(this.stateStore.NewOverlayDB()), this)
