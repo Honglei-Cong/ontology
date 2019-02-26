@@ -146,6 +146,7 @@ func (tx *Transaction) IntoMutable() (*MutableTransaction, error) {
 	return mutable, nil
 }
 
+// TODO deserialize shard version will failed while use gettxinfo cmd
 func (tx *Transaction) deserializationUnsigned(source *common.ZeroCopySource) error {
 	var irregular, eof bool
 	tx.Version, eof = source.NextByte()
