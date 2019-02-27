@@ -195,15 +195,17 @@ func (self *Server) constructBlock(blkNum uint32, prevBlkHash common.Uint256, tx
 	}
 	shardTxs := make(map[uint64][]*types.Transaction)
 	if self.parentHeight < parentHeight {
-		shardTxs = chainmgr.GetShardTxsByParentHeight(self.parentHeight+1, parentHeight)
+		temp := chainmgr.GetShardTxsByParentHeight(self.parentHeight+1, parentHeight)
+		for id, txs := range temp {
+			shardTxs[id.ToUint64()] = txs
+		}
 	}
 	txRoot := common.ComputeMerkleRoot(txHash)
 	blockRoot := ledger.DefLedger.GetBlockRootWithNewTxRoots(lastBlock.Block.Header.Height, []common.Uint256{lastBlock.Block.Header.TransactionsRoot, txRoot})
 
 	blkHeader := &types.Header{
 		PrevBlockHash:    prevBlkHash,
-		ShardID:          chainmgr.GetShardID(),
-		ParentShardID:    chainmgr.GetParentShardID(),
+		ShardID:          chainmgr.GetShardID().ToUint64(),
 		ParentHeight:     parentHeight,
 		TransactionsRoot: txRoot,
 		BlockRoot:        blockRoot,

@@ -64,7 +64,7 @@ var GenesisBookkeepers []keypair.PublicKey
 // BuildGenesisBlock returns the genesis block with default consensus bookkeeper list
 func BuildGenesisBlock(defaultBookkeeper []keypair.PublicKey, genesisConfig *config.GenesisConfig,
 	shardConfig *config.ShardConfig) (*types.Block, error) {
-	if shardConfig != nil && shardConfig.ShardID != config.DEFAULT_SHARD_ID {
+	if shardConfig != nil && shardConfig.ShardID != types.NewShardIDUnchecked(config.DEFAULT_SHARD_ID) {
 		return buildShardGenesisBlock(defaultBookkeeper, genesisConfig, shardConfig)
 	}
 
@@ -145,8 +145,7 @@ func buildShardGenesisBlock(defaultBookkeeper []keypair.PublicKey, genesisConfig
 	//blockdata
 	genesisHeader := &types.Header{
 		Version:          BlockVersion,
-		ShardID:          shardConfig.ShardID,
-		ParentShardID:    shardConfig.ParentShardID,
+		ShardID:          shardConfig.ShardID.ToUint64(),
 		ParentHeight:     shardConfig.GenesisParentHeight,
 		PrevBlockHash:    common.Uint256{},
 		TransactionsRoot: common.Uint256{},

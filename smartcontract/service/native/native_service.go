@@ -49,7 +49,7 @@ type NativeService struct {
 	InvokeParam   sstates.ContractInvokeParam
 	Input         []byte
 	Tx            *types.Transaction
-	ShardID       uint64
+	ShardID       types.ShardID
 	ParentShardID uint64
 	Height        uint32
 	Time          uint32

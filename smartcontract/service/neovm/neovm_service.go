@@ -123,8 +123,7 @@ type NeoVmService struct {
 	Notifications []*event.NotifyEventInfo
 	Code          []byte
 	Tx            *types.Transaction
-	ShardID       uint64
-	ParentShardID uint64
+	ShardID       types.ShardID
 	Time          uint32
 	Height        uint32
 	BlockHash     scommon.Uint256

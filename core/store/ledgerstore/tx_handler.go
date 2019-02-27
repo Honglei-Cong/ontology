@@ -55,10 +55,15 @@ func (self *StateStore) HandleDeployTransaction(store store.LedgerStore, overlay
 		err         error
 	)
 
+	shardID, err := types.NewShardID(block.Header.ShardID)
+	if err != nil {
+		return err
+	}
+
 	if tx.GasPrice != 0 {
 		// init smart contract configuration info
 		config := &smartcontract.Config{
-			ShardID:   block.Header.ShardID,
+			ShardID:   shardID,
 			Time:      block.Header.Timestamp,
 			Height:    block.Header.Height,
 			Tx:        tx,
@@ -126,9 +131,13 @@ func (self *StateStore) HandleInvokeTransaction(store store.LedgerStore, overlay
 
 	isCharge := !sysTransFlag && tx.GasPrice != 0
 
+	shardID, err := types.NewShardID(block.Header.ShardID)
+	if err != nil {
+		return err
+	}
 	// init smart contract configuration info
 	config := &smartcontract.Config{
-		ShardID:   block.Header.ShardID,
+		ShardID:   shardID,
 		Time:      block.Header.Timestamp,
 		Height:    block.Header.Height,
 		Tx:        tx,
@@ -143,7 +152,6 @@ func (self *StateStore) HandleInvokeTransaction(store store.LedgerStore, overlay
 		codeLenGasLimit   uint64
 		availableGasLimit uint64
 		minGas            uint64
-		err               error
 	)
 
 	availableGasLimit = tx.GasLimit
