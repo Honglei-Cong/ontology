@@ -109,7 +109,7 @@ type Server struct {
 	completedBlockNum        uint32 // ledger SaveBlockCompleted block num
 	currentBlockNum          uint32
 	LastConfigBlockNum       uint32
-	parentHeight             uint64 // ParentHeight of last block
+	parentHeight             uint32 // ParentHeight of last block
 	config                   *vconfig.ChainConfig
 	currentParticipantConfig *BlockParticipantConfig
 

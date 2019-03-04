@@ -54,7 +54,7 @@ type SoloService struct {
 	sub              *events.ActorSubscriber
 
 	// sharding
-	parentHeight uint64 // ParentHeight of last block
+	parentHeight uint32 // ParentHeight of last block
 }
 
 func NewSoloService(bkAccount *account.Account, txpool *actor.PID) (*SoloService, error) {
