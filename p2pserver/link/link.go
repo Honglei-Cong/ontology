@@ -172,7 +172,7 @@ func (this *Link) Tx(msg types.Message) error {
 		return errors.New("[p2p]tx link invalid")
 	}
 
-	sink := comm.NewZeroCopySink(nil)
+	sink := comm.NewZeroCopySink(0)
 	err := types.WriteMessage(sink, msg)
 	if err != nil {
 		log.Debugf("[p2p]error serialize messge ", err.Error())

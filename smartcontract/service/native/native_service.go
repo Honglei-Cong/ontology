@@ -50,7 +50,6 @@ type NativeService struct {
 	Input         []byte
 	Tx            *types.Transaction
 	ShardID       types.ShardID
-	ParentShardID uint64
 	Height        uint32
 	Time          uint32
 	BlockHash     common.Uint256
