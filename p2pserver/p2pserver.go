@@ -360,8 +360,7 @@ func (this *P2PServer) reachMinConnection() bool {
 	case "solo":
 		minCount = config.SOLO_MIN_NODE_NUM
 	case "vbft":
-		minCount = config.VBFT_MIN_NODE_NUM
-
+		minCount = int(config.DefConfig.Genesis.VBFT.C*2 + 1)
 	}
 	return int(this.GetConnectionCnt())+1 >= minCount
 }

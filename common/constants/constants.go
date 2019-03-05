@@ -68,7 +68,7 @@ var UNBOUND_DEADLINE = (func() uint32 {
 })()
 
 // multi-sig constants
-const MULTI_SIG_MAX_PUBKEY_SIZE = 16
+const MULTI_SIG_MAX_PUBKEY_SIZE = 32
 
 // transaction constants
 const TX_MAX_SIG_SIZE = 16
