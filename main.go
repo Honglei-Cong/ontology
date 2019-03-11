@@ -168,7 +168,8 @@ func startOntology(ctx *cli.Context) {
 }
 
 func startMainChain(ctx *cli.Context) {
-	initLog(ctx, types.NewShardIDUnchecked(0))
+	shardID := types.NewShardIDUnchecked(0)
+	initLog(ctx, shardID)
 
 	if _, err := initConfig(ctx); err != nil {
 		log.Errorf("initConfig error:%s", err)
@@ -187,7 +188,7 @@ func startMainChain(ctx *cli.Context) {
 	}
 	defer chainmgr.Stop()
 
-	ldg, err := initLedger(ctx)
+	ldg, err := initLedger(ctx, shardID)
 	if err != nil {
 		log.Errorf("%s", err)
 		return
@@ -269,7 +270,7 @@ func startShardChain(ctx *cli.Context, shardID types.ShardID) {
 		config.DefConfig.Genesis.SOLO.Bookkeepers = []string{curPk}
 	}
 
-	ldg, err := initLedger(ctx)
+	ldg, err := initLedger(ctx, shardID)
 	if err != nil {
 		log.Errorf("%s", err)
 		return
@@ -314,7 +315,7 @@ func initLog(ctx *cli.Context, shardID types.ShardID) {
 	logLevel := ctx.GlobalInt(utils.GetFlagName(utils.LogLevelFlag))
 	logPath := log.PATH
 	if shardID.ToUint64() > 0 {
-		logPath = path.Join(logPath, shard.GetShardName(shardID))
+		logPath = path.Join(shard.GetShardName(shardID), logPath)
 	}
 	alog.InitLog(logPath)
 	log.InitLog(logLevel, logPath, log.Stdout)
@@ -368,7 +369,7 @@ func initChainManager(ctx *cli.Context, acc *account.Account) (*shard.ChainManag
 	parentShardID := shardID.ParentID()
 	parentShardAddr := ctx.String(utils.GetFlagName(utils.ParentShardIPFlag))
 	parentShardPort := ctx.Uint(utils.GetFlagName(utils.ParentShardPortFlag))
-	log.Infof("staring shard %d chain mgr: port %d, parent (%d, %s, %d)", shardID, shardPort, parentShardID,
+	log.Infof("starting shard %d chain mgr: port %d, parent (%d, %s, %d)", shardID, shardPort, parentShardID,
 		parentShardAddr, parentShardPort)
 
 	// get all cmdArgs, for sub-shards
@@ -393,11 +394,14 @@ func initChainManager(ctx *cli.Context, acc *account.Account) (*shard.ChainManag
 	return chainmgr, err
 }
 
-func initLedger(ctx *cli.Context) (*ledger.Ledger, error) {
+func initLedger(ctx *cli.Context, shardID types.ShardID) (*ledger.Ledger, error) {
 	events.Init() //Init event hub
 
 	var err error
 	dbDir := utils.GetStoreDirPath(config.DefConfig.Common.DataDir, config.DefConfig.P2PNode.NetworkName)
+	if shardID.ToUint64() > 0 {
+		dbDir = utils.GetStoreDirPath(config.DefConfig.P2PNode.NetworkName, config.DefConfig.Common.DataDir)
+	}
 	ledger.DefLedger, err = ledger.NewLedger(dbDir)
 	if err != nil {
 		return nil, fmt.Errorf("NewLedger error:%s", err)
