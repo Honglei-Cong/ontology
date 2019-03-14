@@ -37,6 +37,10 @@ const MAX_TX_SIZE = 1024 * 1024 // The max size of a transaction to prevent DOS 
 
 const VERSION_SUPPORT_SHARD = 1
 
+func GetCurrentTxVersion() byte {
+	return VERSION_SUPPORT_SHARD
+}
+
 type Transaction struct {
 	Version  byte
 	TxType   TransactionType
