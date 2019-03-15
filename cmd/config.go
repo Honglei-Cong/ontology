@@ -115,6 +115,7 @@ func setGenesis(ctx *cli.Context, cfg *config.OntologyConfig) error {
 		if len(cfg.Genesis.VBFT.Peers) < config.VBFT_MIN_NODE_NUM {
 			return fmt.Errorf("VBFT consensus at least need %d peers in config", config.VBFT_MIN_NODE_NUM)
 		}
+	case config.CONSENSUS_TYPE_SOLO:
 	default:
 		return fmt.Errorf("Unknow consensus:%s", cfg.Genesis.ConsensusType)
 	}
