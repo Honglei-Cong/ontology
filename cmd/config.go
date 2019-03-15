@@ -43,7 +43,6 @@ func SetOntologyConfig(ctx *cli.Context) (*config.OntologyConfig, error) {
 	if cfg.Genesis.ConsensusType == config.CONSENSUS_TYPE_SOLO {
 		cfg.Ws.EnableHttpWs = true
 		cfg.Restful.EnableHttpRestful = true
-		cfg.Consensus.EnableConsensus = true
 		cfg.P2PNode.NetworkId = config.NETWORK_ID_SOLO_NET
 		cfg.P2PNode.NetworkName = config.GetNetworkName(cfg.P2PNode.NetworkId)
 		cfg.P2PNode.NetworkMagic = config.GetNetworkMagic(cfg.P2PNode.NetworkId)
