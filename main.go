@@ -449,10 +449,10 @@ func initTxPool(ctx *cli.Context) (*proc.TXPoolServer, error) {
 }
 
 func initP2PNode(ctx *cli.Context, txpoolSvr *proc.TXPoolServer) (*p2pserver.P2PServer, *actor.PID, error) {
-	if config.DefConfig.Genesis.ConsensusType == config.CONSENSUS_TYPE_SOLO {
-		return nil, nil, nil
-	}
-
+	//if config.DefConfig.Genesis.ConsensusType == config.CONSENSUS_TYPE_SOLO {
+	//	return nil, nil, nil
+	//}
+	//
 	// TODO: fix P2P for sharding
 
 	p2p := p2pserver.NewServer()
