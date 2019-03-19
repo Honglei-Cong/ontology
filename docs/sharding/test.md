@@ -26,6 +26,9 @@ start shard chain:
 ```
 ./ontology --ShardID 1 --ShardPort 20341 --enable-shard-rpc --ParentShardPort 20340
 ./ontology --ShardID 2 --ShardPort 20342 --enable-shard-rpc --ParentShardPort 20340
+
+./ontology   --enable-shard-rpc --config solo-config.json --enable-consensus
+./ontology --ShardPort 20440 --enable-shard-rpc --nodeport 20438 --rpcport 20436 --restport 20435 --wsport 20434 --config ../solo-config.json
 ```
 
 

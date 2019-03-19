@@ -21,9 +21,10 @@ package shardping
 import (
 	"bytes"
 	"fmt"
-	"github.com/ontio/ontology/core/types"
 
 	"github.com/ontio/ontology/common/log"
+	"github.com/ontio/ontology/core/states"
+	"github.com/ontio/ontology/core/types"
 	"github.com/ontio/ontology/smartcontract/service/native"
 	"github.com/ontio/ontology/smartcontract/service/native/shard_sysmsg"
 	"github.com/ontio/ontology/smartcontract/service/native/shardmgmt"
@@ -44,6 +45,9 @@ const (
 	// function name
 	SHARD_PING_NAME      = "shardPing"
 	SEND_SHARD_PING_NAME = "sendShardPing"
+
+	// key prefix
+	KEY_PING_MSG = "ping"
 )
 
 func InitShardPing() {
@@ -68,6 +72,10 @@ func ShardPingTest(native *native.NativeService) ([]byte, error) {
 	if params.ToShard != native.ShardID {
 		return utils.BYTE_FALSE, fmt.Errorf("ping shard, invalid to shard: %d vs %d", params.ToShard, native.ShardID)
 	}
+
+	contract := native.ContextRef.CurrentContext().ContractAddress
+	key := utils.ConcatKey(contract, []byte(KEY_PING_MSG), []byte(params.Param))
+	native.CacheDB.Put(key, states.GenRawStorageItem(cp.Input))
 
 	log.Infof("shard ping: from %d, to %d, param: %s", params.FromShard, params.ToShard, params.Param)
 	return utils.BYTE_TRUE, nil
