@@ -47,6 +47,7 @@ func BuildShardCommandArgs(cmdArgs map[string]string, shardID types.ShardID, sha
 	shardArgs[NodePortFlag.GetName()] = fmt.Sprintf("%d", shardportcfg.NodePort)
 	shardArgs[RPCPortFlag.GetName()] = fmt.Sprintf("%d", shardportcfg.RpcPort)
 	shardArgs[RestfulPortFlag.GetName()] = fmt.Sprintf("%d", shardportcfg.RestPort)
+	shardArgs[EnableConsensusFlag.GetName()] = "true"
 	// copy all args to new shard command, except sharding related flags
 	for n, v := range cmdArgs {
 		// FIXME: disabled consensusPort flag
