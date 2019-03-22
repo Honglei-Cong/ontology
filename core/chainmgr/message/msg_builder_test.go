@@ -24,6 +24,7 @@ import (
 
 	"github.com/ontio/ontology/account"
 	"github.com/ontio/ontology/core/chainmgr/message"
+	"github.com/ontio/ontology/core/types"
 )
 
 func TestNewCrossShardTxMsg(t *testing.T) {
@@ -32,7 +33,8 @@ func TestNewCrossShardTxMsg(t *testing.T) {
 		t.Fatalf("failed to new account")
 	}
 	payload := [][]byte{{1, 2, 3, 4}}
-	tx, err := message.NewCrossShardTxMsg(acc, 100, 10, payload)
+	toShardID, _ := types.NewShardID(10)
+	tx, err := message.NewCrossShardTxMsg(acc, 100, toShardID, payload)
 	if err != nil {
 		t.Fatalf("failed to build cross shard tx: %s", err)
 	}

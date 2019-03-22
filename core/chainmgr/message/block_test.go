@@ -66,16 +66,16 @@ func newTestShardBlockInfo(t *testing.T) *message.ShardBlockInfo {
 	}
 
 	version := byte(100)
-	shardID := uint64(100)
-	shardTx := newTestShardTx(t, version, shardID)
-	blkInfo.ShardTxs[shardTx.Tx.ShardID] = shardTx
+	shardID, _ := types.NewShardID(100)
+	shardTx := newTestShardTx(t, version, shardID.ToUint64())
+	blkInfo.ShardTxs[shardID] = shardTx
 
 	return blkInfo
 }
 
 func TestShardBlockHeader_Marshal(t *testing.T) {
 	height := uint32(123)
-	parentHeight := uint64(321)
+	parentHeight := uint32(321)
 
 	shardHdr := newTestBlockHdr()
 	shardHdr.Header.Height = height
