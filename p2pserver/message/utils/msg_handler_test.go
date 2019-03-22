@@ -66,7 +66,7 @@ func init() {
 		return
 	}
 	genesisConfig := config.DefConfig.Genesis
-	genesisBlock, err := genesis.BuildGenesisBlock(bookKeepers, genesisConfig)
+	genesisBlock, err := genesis.BuildGenesisBlock(bookKeepers, genesisConfig, nil)
 	if err != nil {
 		log.Fatal("failed to build genesis block", err)
 		return
