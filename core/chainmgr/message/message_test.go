@@ -51,7 +51,7 @@ func TestShardHelloMsg(t *testing.T) {
 
 func TestShardBlockRspMsg(t *testing.T) {
 	blkHdr := newTestBlockHdr()
-	tx := newTestShardTx(t, 10, 1000)
+	tx := newTestShardTx(t, types.VERSION_SUPPORT_SHARD, 1000)
 	fromShardID, _ := types.NewShardID(100)
 	rsp := &message.ShardBlockRspMsg{
 		FromShardID: fromShardID,

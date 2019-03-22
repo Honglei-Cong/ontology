@@ -66,7 +66,7 @@ func newTestShardBlockInfo(t *testing.T) *message.ShardBlockInfo {
 		ShardTxs:    make(map[types.ShardID]*message.ShardBlockTx),
 	}
 
-	version := byte(100)
+	version := byte(types.VERSION_SUPPORT_SHARD)
 	shardID, _ := types.NewShardID(100)
 	shardTx := newTestShardTx(t, version, shardID.ToUint64())
 	blkInfo.ShardTxs[shardID] = shardTx
@@ -102,7 +102,7 @@ func TestShardBlockHeader_Marshal(t *testing.T) {
 }
 
 func TestShardBlockTx_Marshal(t *testing.T) {
-	version := byte(1)
+	version := byte(types.VERSION_SUPPORT_SHARD)
 	shardID := uint64(100)
 
 	shardTx := newTestShardTx(t, version, shardID)
