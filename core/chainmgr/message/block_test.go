@@ -20,6 +20,7 @@ package message_test
 
 import (
 	"encoding/json"
+	"github.com/ontio/ontology/common"
 	"testing"
 
 	"github.com/ontio/ontology-crypto/keypair"
@@ -32,6 +33,7 @@ import (
 
 func newTestBlockHdr() *message.ShardBlockHeader {
 	hdr := &types.Header{}
+	hdr.Version = types.VERSION_SUPPORT_SHARD
 	hdr.Bookkeepers = make([]keypair.PublicKey, 0)
 	hdr.SigData = make([][]byte, 0)
 
@@ -101,7 +103,7 @@ func TestShardBlockHeader_Marshal(t *testing.T) {
 }
 
 func TestShardBlockTx_Marshal(t *testing.T) {
-	version := byte(100)
+	version := byte(1)
 	shardID := uint64(100)
 
 	shardTx := newTestShardTx(t, version, shardID)

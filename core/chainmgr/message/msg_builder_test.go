@@ -20,6 +20,7 @@ package message_test
 
 import (
 	"bytes"
+	"github.com/ontio/ontology/core/types"
 	"testing"
 
 	"github.com/ontio/ontology/account"
