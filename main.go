@@ -335,9 +335,6 @@ func initConfig(ctx *cli.Context) (*config.OntologyConfig, error) {
 }
 
 func initAccount(ctx *cli.Context) (*account.Account, error) {
-	if !config.DefConfig.Consensus.EnableConsensus {
-		return nil, nil
-	}
 	walletFile := ctx.GlobalString(utils.GetFlagName(utils.WalletFileFlag))
 	if walletFile == "" {
 		return nil, fmt.Errorf("Please config wallet file using --wallet flag")
@@ -352,7 +349,7 @@ func initAccount(ctx *cli.Context) (*account.Account, error) {
 	}
 	log.Infof("Using account:%s", acc.Address.ToBase58())
 
-	if config.DefConfig.Genesis.ConsensusType == config.CONSENSUS_TYPE_SOLO {
+	if config.DefConfig.Genesis.ConsensusType == config.CONSENSUS_TYPE_SOLO && config.DefConfig.Consensus.EnableConsensus {
 		curPk := hex.EncodeToString(keypair.SerializePublicKey(acc.PublicKey))
 		config.DefConfig.Genesis.SOLO.Bookkeepers = []string{curPk}
 	}
