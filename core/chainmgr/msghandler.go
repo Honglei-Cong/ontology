@@ -380,6 +380,9 @@ func (self *ChainManager) handleBlockEvents(header *types.Header, shardEvts []*e
 		if _, present := blkInfo.ShardTxs[shardID]; present {
 			continue
 		}
+		if !self.shards[shardID].Connected {
+			continue
+		}
 
 		msg, err := message.NewShardBlockRspMsg(self.shardID, header, shardTxs[shardID], self.localPid)
 		if err != nil {
