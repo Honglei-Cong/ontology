@@ -20,9 +20,12 @@ package chainmgr
 
 import (
 	"bytes"
+	"encoding/hex"
 	"fmt"
 	"sort"
+	"strings"
 
+	"github.com/ontio/ontology-crypto/keypair"
 	"github.com/ontio/ontology/common/config"
 	"github.com/ontio/ontology/core/types"
 	"github.com/ontio/ontology/smartcontract/service/native/shardmgmt/states"
@@ -53,6 +56,13 @@ func (self *ChainManager) buildShardConfig(shardID types.ShardID, shardState *sh
 	shardConfig := &config.OntologyConfig{}
 	if err := shardConfig.Deserialize(buf); err != nil {
 		return nil, fmt.Errorf("init child config: %s", err)
+	}
+
+	selfPK := strings.ToLower(hex.EncodeToString(keypair.SerializePublicKey(self.account.PublicKey)))
+	for peerPK, _ := range shardState.Peers {
+		if peerPK == selfPK {
+			shardConfig.Consensus.EnableConsensus = true
+		}
 	}
 
 	if shardConfig.Genesis.ConsensusType == config.CONSENSUS_TYPE_SOLO {
