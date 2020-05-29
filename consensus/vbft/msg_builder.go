@@ -264,9 +264,6 @@ func (self *Server) constructProposalMsg(blkNum uint32, sysTxs, userTxs []*types
 	if prevBlk.Info.NewChainConfig != nil {
 		lastConfigBlkNum = prevBlk.getBlockNum()
 	}
-	if chainconfig != nil {
-		lastConfigBlkNum = blkNum
-	}
 	vbftBlkInfo := &vconfig.VbftBlockInfo{
 		Proposer:           self.Index,
 		VrfValue:           vrfValue,

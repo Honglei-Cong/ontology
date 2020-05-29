@@ -49,6 +49,9 @@ func (blk *Block) getPrevBlockHash() common.Uint256 {
 }
 
 func (blk *Block) getLastConfigBlockNum() uint32 {
+	if blk.Info.NewChainConfig != nil {
+		return blk.Block.Header.Height
+	}
 	return blk.Info.LastConfigBlockNum
 }
 
